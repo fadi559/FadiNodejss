@@ -1,5 +1,8 @@
 
-import express from "express";
+import express, { Router } from "express";
+
+import authenticateToken from "../models/authenticateToken";
+
 
 const router = express.Router();
 
@@ -9,8 +12,12 @@ const {
   signin,
   forgotPassword,
   resetPassword,
+  jobposts,
+    
   
+
 } = require("../controllers/auth");
+
 
 router.get("/", (req, res) => {
   return res.json({
@@ -21,7 +28,9 @@ router.post("/signup", signup);
 router.post("/signin", signin);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
+router.post('/jobposts',jobposts)
 
-// router.post("/authToken",authToken);
+
+
 
 export default router;
