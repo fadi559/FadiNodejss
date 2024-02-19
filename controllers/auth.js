@@ -3,9 +3,7 @@ import User from "../models/user";
 import { hashPassword, comparePassword } from "../helpers/auth";
 import jwt from "jsonwebtoken";
 import nanoid from "nanoid";
-import Post from'../models/post';
-
-
+import JobPost from '../models/post'
 
 
 // sendgrid
@@ -17,7 +15,7 @@ export const signup = async (req, res) => {
   console.log("HIT SIGNUP");
   try {
     // validation
-    const { name, email,PhoneNumber,password } = req.body;
+    const { name, email,phoneNumber,password } = req.body;
     // 
     if (!name) {
       return res.json({
@@ -35,7 +33,7 @@ export const signup = async (req, res) => {
         error: "Password is required and should be 6 characters long",
       });
     }
-    if (!PhoneNumber) {
+    if (!phoneNumber) {
       return res.json({
         error: "phoneNumber is required",
       });
@@ -51,7 +49,7 @@ export const signup = async (req, res) => {
     try {
       const user = await new User({
         // this new pho
-        PhoneNumber,
+        phoneNumber,
         name,
         email,
         password:hashedPassword,
@@ -95,14 +93,14 @@ export const signin = async (req, res) => {
       });
     }
     // create signed token
-    const token = jwt.sign({ _id: user._id }, "fadi99", {
-      expiresIn: "7d",
-    });
+    // const token = jwt.sign({ _id: user._id }, "fadi99", {
+    //   expiresIn: "7d",
+    // });
 
     user.password = undefined;
-    user.secret = undefined;
-    res.json({
-      token,
+    // user.secret = undefined;
+    res.status(200).json({
+      // token,
       user,
     });
   } catch (err) {
@@ -139,7 +137,7 @@ export const resetPassword = async (req, res) => {
 };
 
 
-
+// not conected 
    export const profileUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -156,7 +154,7 @@ export const resetPassword = async (req, res) => {
 };
 
 
-
+// not conected 
 export const ueserId =async (req, res) => {
   
   try {
@@ -190,12 +188,19 @@ export const ueserId =async (req, res) => {
 
 
 export const jobposts = async (req, res) => {
+
+  console.log("req.body: " , req.body);
+  
+
+  const user = (req.body.user && req.body.user._id )|| 'anonymous'
+
+
   try {
-    const jobPost = new JobPost({ ...req.body, createdBy: req.user._id }); // Assuming you have middleware to authenticate and add user to req
+    const jobPost = new JobPost({ ...req.body, user:  user}); // Assuming you have middleware to authenticate and add user to req
     await jobPost.save();
     res.status(201).send(jobPost);
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).json({error : error.message});
   }
 };
 
@@ -213,100 +218,22 @@ export const jobposts2= async (req, res) => {
 
 
 
-// seocned try 
 
-  // export  const CreatPost =async (req, res) => {
-
-  // try {
-  //   const { job, userId } = req.body;
-
-  //   const newPostData = {
-  //     user: userId,
-  //   };
-
-  //   if (job) {
-  //     newPostData.job = job;
+// not conected 
+  // export const All = async (req, res) => {
+  //   try {
+  //     const posts = await Post.find().populate("user", "name profileImage");
+  
+  //     res.status(200).json({ posts });
+  //   } catch (error) {
+  //     console.log("error fetching all the posts", error);
+  //     res.status(500).json({ message: "Error fetching all the posts" });
   //   }
-
-  //   const newPost = new Post(newPostData);
-
-  //   await newPost.save();
-
-  //   res.status(200).json({ message: "Post saved successfully" });
-  // } catch (error) {
-  //   res.status(500).json({ message: "post creation failed" });
-  // }
   // };
-
-
-// first try
-
-// export  const CreatPost =async (req, res) => {
-//     try {
-//       const { job, userId } = req.body;
-
-//       const newPost = new Post({
-//         job : job,
-//         user: userId,
-//       });
-
-//       await newPost.save();
-
-//       res
-//         .status(201)
-//         .json({ message: "Post created successfully", post: newPost });
-        
-//     } catch (error) {
-//       console.log("error creating the post", error);
-//       res.status(500).json({ message: "Error creating the post" });
-//     }
-//   };
-
-
-  export const All = async (req, res) => {
-    try {
-      const posts = await Post.find().populate("user", "name profileImage");
-  
-      res.status(200).json({ posts });
-    } catch (error) {
-      console.log("error fetching all the posts", error);
-      res.status(500).json({ message: "Error fetching all the posts" });
-    }
-  };
   
 
 
-// export const authToken =async(req,res)=>{
-//   const token = jwt.sign({ _id: user._id }, "fadi99", {
-//     expiresIn: "7d",
-//   });
 
-//   if (authToken === token) { // Replace 'your-auth-token' with actual token
-//     res.json({ success: true, message: 'Authentication successful' });
-//   } else {
-//     res.status(401).json({ success: false, message: 'Authentication failed' });
-//   }
-// }
-
-//  export const phoneNumber =async(req,res)=>{
-
-//   try {
- 
-//   const existingPhoneNumber = await PhoneNumber.findOne({ phoneNumber });
-//   if (existingPhoneNumber) {
-//     return res.status(400).json({ error: 'Phone number already exists' });
-//   }
-//   const newPhoneNumber = new PhoneNumber({ phoneNumber });
-//   await newPhoneNumber.save();
-//   res.status(201).json(newPhoneNumber);
-// } catch (error) {
-//   console.error('Error storing phone number:', error);
-//   res.status(500).json({ error: 'Internal server error' });
-// }
-// };
-// export const pohonett =async(req,res)=>{
-  
-// };
 
 
 

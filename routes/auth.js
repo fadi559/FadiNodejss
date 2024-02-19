@@ -13,9 +13,6 @@ const {
   forgotPassword,
   resetPassword,
   jobposts,
-    
-  
-
 } = require("../controllers/auth");
 
 

@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 const jobPostSchema = new Schema(
     {
 
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
+    user: { type: String, ref: "user", required: true },
 
-    job:{
+    jobType:{
         type:String,
         // default:null,
         
@@ -34,4 +34,4 @@ const jobPostSchema = new Schema(
     )
 
 
-      export default mongoose.model("post",jobPostSchema);
+      export default mongoose.model("JobPost",jobPostSchema);
