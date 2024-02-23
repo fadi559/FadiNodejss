@@ -196,7 +196,7 @@ export const jobposts = async (req, res) => {
 
 
   try {
-    const jobPost = new JobPost({ ...req.body, user:  user}); // Assuming you have middleware to authenticate and add user to req
+    const jobPost = new JobPost({ ...req.body, user:  user});
     await jobPost.save();
     res.status(201).send(jobPost);
   } catch (error) {
@@ -213,6 +213,22 @@ export const jobposts2= async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+
+export const getposts = async (req, res) => {
+  try {
+    const posts = await JobPost.find()
+      .populate("user", "name","jobType","skills")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(posts);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "An error occurred while getting the posts",error });
+  }
+};
+
 
 
 

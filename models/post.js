@@ -3,31 +3,38 @@ const { Schema } = mongoose;
 
 const jobPostSchema = new Schema(
     {
+      // user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
-    user: { type: String, ref: "user", required: true },
+     user: { type: String, ref: "user", required: true },
+     postedBy:{
+        type: mongoose. Schema.ObjectId,
+       ref:"user",
+       required:true,
+     },
 
     jobType:{
         type:String,
-        // default:null,
+         default:null,
         
       },
       skills:{
         type:String,
-        // default:null,
+         default:null,
   
       },
       location:{
         type:String,
-        // default:null,
+         default:null,
   
       },
       notes:{
         type:String,
-        // default:null,
+        default:null,
       },
       phone:{
         type:String,
-        // default:null,
+        
+         unique: true,
       },
       datePosted: { type: Date, default: Date.now }
     }
