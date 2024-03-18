@@ -13,7 +13,9 @@ const {
   forgotPassword,
   resetPassword,
   jobposts,
-  getposts
+  jobposts2,
+  UsersSearch,
+  userId
 } = require("../controllers/auth");
 
 
@@ -26,8 +28,13 @@ router.post("/signup", signup);
 router.post("/signin", signin);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
-router.post('/jobposts',jobposts)
-router.get('/getposts',getposts)
+router.post('/jobposts',jobposts);
+router.get('/jobposts2',jobposts2);
+ router.get('/UsersSearch,',UsersSearch);
+ router.get('/userId,',userId);
+
+
+
 
 
 

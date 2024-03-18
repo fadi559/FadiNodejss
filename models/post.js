@@ -1,20 +1,23 @@
 import mongoose from "mongoose";
-const { Schema } = mongoose;
+const { Schema,ObjectId } = mongoose;
 
 const jobPostSchema = new Schema(
     {
       // user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+      // user: { type: mongoose.Schema.Types.ObjectId, 
+      //   ref: 'User', required: true },
+  // Timestamps, other fields...
 
-     user: { type: String, ref: "user", required: true },
+     User: { type: String, ref: "User", required: true },
      postedBy:{
         type: mongoose. Schema.ObjectId,
-       ref:"user",
-       required:true,
+       ref:"User",
+        //  required:true,
      },
-
+     
     jobType:{
         type:String,
-         default:null,
+        default:null,
         
       },
       skills:{
@@ -31,10 +34,10 @@ const jobPostSchema = new Schema(
         type:String,
         default:null,
       },
-      phone:{
+      Phonenumber:{
         type:String,
-        
-         unique: true,
+        trim: true,
+        unique: true,
       },
       datePosted: { type: Date, default: Date.now }
     }

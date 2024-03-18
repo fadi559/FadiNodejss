@@ -6,6 +6,7 @@ import nanoid from "nanoid";
 import JobPost from '../models/post'
 
 
+
 // sendgrid
 // require("dotenv").config();
 // const sgMail = require("@sendgrid/mail");
@@ -136,48 +137,35 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-
-// not conected 
-   export const profileUserId = async (req, res) => {
+// Example using Express
+export const userId = async (req, res) => {
   try {
-    const userId = req.params.userId;
-
-    const user = await User.findById(userId);
+    const user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "user not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
-
-    res.status(200).json({ user });
+    res.json(user);
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving user profile" });
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching user information' });
   }
 };
 
 
+    
 // not conected 
-export const ueserId =async (req, res) => {
+   const ueserId =async (req, res) => {
   
   try {
     const loggedInUserId = req.params.userId;
-
+    const user = await User.findOne({ email });
     //fetch the logged-in user's connections
-    const loggedInuser = await User.findById(loggedInUserId).populate(
-      "connections",
-      "_id"
-    );
+    const loggedInuser = await User.findById({email});
+     
     if (!loggedInuser) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    //get the ID's of the connected users
-    const connectedUserIds = loggedInuser.connections.map(
-      (connection) => connection._id
-    );
-
-    //find the users who are not connected to the logged-in user Id
-    const users = await User.find({
-      _id: { $ne: loggedInUserId, $nin: connectedUserIds },
-    });
 
     res.status(200).json(users);
   } catch (error) {
@@ -186,17 +174,12 @@ export const ueserId =async (req, res) => {
   }
 };
 
-
 export const jobposts = async (req, res) => {
-
+ 
   console.log("req.body: " , req.body);
-  
-
-  const user = (req.body.user && req.body.user._id )|| 'anonymous'
-
-
+   const user = (req.body.User && req.body._id) 
   try {
-    const jobPost = new JobPost({ ...req.body, user:  user});
+    const jobPost = new JobPost({ ...req.body, user:user}) 
     await jobPost.save();
     res.status(201).send(jobPost);
   } catch (error) {
@@ -205,9 +188,9 @@ export const jobposts = async (req, res) => {
 };
 
 export const jobposts2= async (req, res) => {
-
   try {
-    const jobPosts = await JobPost.find({});
+  
+    const jobPosts = await JobPost.find({})
     res.send(jobPosts);
   } catch (error) {
     res.status(500).send(error);
@@ -215,43 +198,25 @@ export const jobposts2= async (req, res) => {
 };
 
 
-export const getposts = async (req, res) => {
-  try {
-    const posts = await JobPost.find()
-      .populate("user", "name","jobType","skills")
-      .sort({ createdAt: -1 });
+ export const UsersSearch =async (req, res) => {
 
-    res.status(200).json(posts);
+  res.json({ user: [{ name: 'John Doe' }] });
+  const searchTerm = req.query.q; // Get the search term from query parameters
+  if (!searchTerm) {
+    return res.status(400).send({ message: 'Search term is required' });
+  }
+  
+  try {
+    const user = await User.find({
+      // Adjust the query to match your user schema. This example searches the 'name' field.
+      name: { $regex: searchTerm, $options: 'i' }, // Case-insensitive regex search
+    });
+    
+    res.json(user);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "An error occurred while getting the posts",error });
+    res.status(500).send({ message: 'Error searching for users', error: error.message });
   }
 };
-
-
-
-
-
-
-
-// not conected 
-  // export const All = async (req, res) => {
-  //   try {
-  //     const posts = await Post.find().populate("user", "name profileImage");
-  
-  //     res.status(200).json({ posts });
-  //   } catch (error) {
-  //     console.log("error fetching all the posts", error);
-  //     res.status(500).json({ message: "Error fetching all the posts" });
-  //   }
-  // };
-  
-
-
-
-
-
 
 
 export const forgotPassword = async (req, res) => {
@@ -285,3 +250,4 @@ export const forgotPassword = async (req, res) => {
   //   }
    };
   
+// 
