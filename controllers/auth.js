@@ -217,6 +217,17 @@ export const jobposts2= async (req, res) => {
     res.status(500).send({ message: 'Error searching for users', error: error.message });
   }
 };
+export const userId1 =async (req, res) => {
+  try {
+    const user = await User.findById(req.params.User); // Assume User is your Mongoose model
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 
 export const forgotPassword = async (req, res) => {

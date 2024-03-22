@@ -15,7 +15,8 @@ const {
   jobposts,
   jobposts2,
   UsersSearch,
-  userId
+  userId,
+  userId1,
 } = require("../controllers/auth");
 
 
@@ -32,6 +33,7 @@ router.post('/jobposts',jobposts);
 router.get('/jobposts2',jobposts2);
  router.get('/UsersSearch,',UsersSearch);
  router.get('/userId,',userId);
+ router.get('/userId1,',userId1);
 
 
 
