@@ -12,7 +12,7 @@ const jobPostSchema = new Schema(
      postedBy:{
         type: mongoose. Schema.ObjectId,
        ref:"User",
-        //  required:true,
+       
      },
      
     jobType:{

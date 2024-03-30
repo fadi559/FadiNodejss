@@ -10,13 +10,11 @@ const router = express.Router();
 const {
   signup,
   signin,
-  forgotPassword,
   resetPassword,
   jobposts,
   jobposts2,
-  UsersSearch,
-  userId,
-  userId1,
+  search,
+
 } = require("../controllers/auth");
 
 
@@ -25,15 +23,17 @@ router.get("/", (req, res) => {
     data: "hello world from fadi auth API",
   });
 });
+
 router.post("/signup", signup);
 router.post("/signin", signin);
-router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
-router.post('/jobposts',jobposts);
-router.get('/jobposts2',jobposts2);
- router.get('/UsersSearch,',UsersSearch);
- router.get('/userId,',userId);
- router.get('/userId1,',userId1);
+router.post('/jobposts', jobposts);
+router.get('/jobposts2', jobposts2);
+router.post("/search", search);
+
+
+
+
 
 
 

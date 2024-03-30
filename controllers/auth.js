@@ -12,6 +12,8 @@ import JobPost from '../models/post'
 // const sgMail = require("@sendgrid/mail");
 // sgMail.setApiKey(process.env.SENDGRID_KEY);
 
+
+
 export const signup = async (req, res) => {
   console.log("HIT SIGNUP");
   try {
@@ -49,7 +51,7 @@ export const signup = async (req, res) => {
     const hashedPassword = await hashPassword(password);
     try {
       const user = await new User({
-        // this new pho
+       
         phoneNumber,
         name,
         email,
@@ -76,7 +78,6 @@ export const signup = async (req, res) => {
 };
 
 export const signin = async (req, res) => {
-  // console.log(req.body);
   try {
     const { email, password } = req.body;
     // check if our db has user with that email
@@ -110,7 +111,6 @@ export const signin = async (req, res) => {
   }
 };
 
-
 export const resetPassword = async (req, res) => {
   try {
     const { email, password, resetCode } = req.body;
@@ -137,43 +137,6 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// Example using Express
-export const userId = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    res.json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching user information' });
-  }
-};
-
-
-    
-// not conected 
-   const ueserId =async (req, res) => {
-  
-  try {
-    const loggedInUserId = req.params.userId;
-    const user = await User.findOne({ email });
-    //fetch the logged-in user's connections
-    const loggedInuser = await User.findById({email});
-     
-    if (!loggedInuser) {
-      return res.status(400).json({ message: "User not found" });
-    }
-
-
-    res.status(200).json(users);
-  } catch (error) {
-    console.log("Error retrieving users", error);
-    res.status(500).json({ message: "Error retrieving users" });
-  }
-};
-
 export const jobposts = async (req, res) => {
  
   console.log("req.body: " , req.body);
@@ -189,7 +152,6 @@ export const jobposts = async (req, res) => {
 
 export const jobposts2= async (req, res) => {
   try {
-  
     const jobPosts = await JobPost.find({})
     res.send(jobPosts);
   } catch (error) {
@@ -197,40 +159,34 @@ export const jobposts2= async (req, res) => {
   }
 };
 
-
- export const UsersSearch =async (req, res) => {
-
-  res.json({ user: [{ name: 'John Doe' }] });
-  const searchTerm = req.query.q; // Get the search term from query parameters
-  if (!searchTerm) {
-    return res.status(400).send({ message: 'Search term is required' });
-  }
-  
+export const search = async (req, res)=>{
+  const {searchTerm} = req.body// Get the search term from query parameters
+  console.log(req.body);
+   if (!searchTerm) {
+    return res.status(400).json({ message: 'Search term is required' });
+ }
   try {
     const user = await User.find({
       // Adjust the query to match your user schema. This example searches the 'name' field.
       name: { $regex: searchTerm, $options: 'i' }, // Case-insensitive regex search
     });
-    
     res.json(user);
+    return;
   } catch (error) {
     res.status(500).send({ message: 'Error searching for users', error: error.message });
   }
 };
-export const userId1 =async (req, res) => {
-  try {
-    const user = await User.findById(req.params.User); // Assume User is your Mongoose model
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+// export const test=(req,res)=>{
+  
+//   res.json([
+//     { id: 1, name: 'John Doe' },
+//     { id: 2, name: 'Jane Doe' }
+//   ]);
+// };
 
 
-export const forgotPassword = async (req, res) => {
+
+// export const forgotPassword = async (req, res) => {
   //   const { email } = req.body;
   //   // find user by email
   //   const user = await User.findOne({ email });
@@ -259,6 +215,6 @@ export const forgotPassword = async (req, res) => {
   //     console.log(err);
   //     res.json({ ok: false });
   //   }
-   };
+   
   
 // 
