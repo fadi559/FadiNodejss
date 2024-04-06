@@ -14,6 +14,9 @@ const {
   jobposts,
   jobposts2,
   search,
+  Skills,
+  Experiences,
+
 
 } = require("../controllers/auth");
 
@@ -30,6 +33,11 @@ router.post("/reset-password", resetPassword);
 router.post('/jobposts', jobposts);
 router.get('/jobposts2', jobposts2);
 router.post("/search", search);
+router.post('/Skills', Skills);
+router.post('/Experiences', Experiences);
+
+
+
 
 
 

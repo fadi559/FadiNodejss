@@ -1,6 +1,9 @@
 
 import mongoose from "mongoose";
-const { Schema } = mongoose;
+import experienceSchema from "./experienceSchema";
+
+const { Schema ,ObjectId} = mongoose;
+
 
 const userSchema = new Schema(
   {
@@ -19,7 +22,6 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       unique: true,
-      
     },
     password: {
       type: String,
@@ -27,7 +29,11 @@ const userSchema = new Schema(
       min: 6,
       max: 64,
     },
-    
+    skills: [{ type: String }], 
+    experiences: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Experience'
+    }],
     role: {
       type: String,
       default: "Subscriber",
@@ -37,7 +43,7 @@ const userSchema = new Schema(
       url: "",
     },
     resetCode: "",
-  
+    
   },
   { timestamps: true } , 
   

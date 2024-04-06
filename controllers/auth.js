@@ -30,7 +30,6 @@ export const signup = async (req, res) => {
         error: "Email is required",
       });
     }
-   
     if (!password || password.length < 6) {
       return res.json({
         error: "Password is required and should be 6 characters long",
@@ -158,17 +157,16 @@ export const jobposts2= async (req, res) => {
     res.status(500).send(error);
   }
 };
-
 export const search = async (req, res)=>{
-  const {searchTerm} = req.body// Get the search term from query parameters
-  console.log(req.body);
+  const {searchTerm} = req.body
+  console.log('body',req.body);
    if (!searchTerm) {
     return res.status(400).json({ message: 'Search term is required' });
  }
   try {
     const user = await User.find({
-      // Adjust the query to match your user schema. This example searches the 'name' field.
-      name: { $regex: searchTerm, $options: 'i' }, // Case-insensitive regex search
+     
+      name: { $regex: searchTerm, $options: 'i' }, 
     });
     res.json(user);
     return;
@@ -176,6 +174,36 @@ export const search = async (req, res)=>{
     res.status(500).send({ message: 'Error searching for users', error: error.message });
   }
 };
+
+//post 
+export const Skills =async(req,res)=>{
+  const { skill } = req.body;
+
+  try {
+    await User.findByIdAndUpdate(req.params.userId, {
+      $push: { skills: skill }
+    });
+    res.status(200).send('Skill added');
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+//post 
+export const Experiences =async(req,res)=>{
+  
+  const { experience } = req.body;
+  try {
+    await User.findByIdAndUpdate(req.params.userId, {
+      $push: { experiences: experience }
+    });
+    res.status(200).send('Experience added');
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+
 // export const test=(req,res)=>{
   
 //   res.json([
