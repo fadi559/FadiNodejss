@@ -165,7 +165,7 @@ export const search = async (req, res)=>{
  }
   try {
     const user = await User.find({
-     
+
       name: { $regex: searchTerm, $options: 'i' }, 
     });
     res.json(user);
@@ -177,16 +177,19 @@ export const search = async (req, res)=>{
 
 //post 
 export const Skills =async(req,res)=>{
-  const { skill } = req.body;
+  const { skill , userId } = req.body;
 
-  try {
-    await User.findByIdAndUpdate(req.params.userId, {
+     User.findByIdAndUpdate(req.body.userId, {
       $push: { skills: skill }
-    });
-    res.status(200).send('Skill added');
-  } catch (error) {
-    res.status(500).send(error);
-  }
+    })
+    // res.status(200).send('Skill added')
+    .then( async (updateRes) => {
+      const userFromDB = await User.findById(userId)
+      res.status(200).json({user: userFromDB})
+    })
+    .catch(error => {
+      res.status(500).json({error: true , message:error.message});
+    })
 };
 
 //post 

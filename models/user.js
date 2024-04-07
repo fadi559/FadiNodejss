@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 import experienceSchema from "./experienceSchema";
 
-const { Schema ,ObjectId} = mongoose;
+const { Schema, ObjectId } = mongoose;
 
 
 const userSchema = new Schema(
@@ -29,10 +29,11 @@ const userSchema = new Schema(
       min: 6,
       max: 64,
     },
-    skills: [{ type: String }], 
+    skills: [{ type: String, default: [] }],
     experiences: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Experience'
+      ref: 'Experience',
+      default: []
     }],
     role: {
       type: String,
@@ -43,10 +44,10 @@ const userSchema = new Schema(
       url: "",
     },
     resetCode: "",
-    
+
   },
-  { timestamps: true } , 
-  
+  { timestamps: true },
+
 );
 
 export default mongoose.model("User", userSchema);
