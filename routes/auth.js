@@ -16,6 +16,7 @@ const {
   search,
   Skills,
   Experiences,
+  SkillsDelete,
 
 
 } = require("../controllers/auth");
@@ -35,6 +36,8 @@ router.get('/jobposts2', jobposts2);
 router.post("/search", search);
 router.post('/Skills', Skills);
 router.post('/Experiences', Experiences);
+router.delete('/SkillsDelete',SkillsDelete);
+
 
 
 

@@ -30,11 +30,9 @@ const userSchema = new Schema(
       max: 64,
     },
     skills: [{ type: String, default: [] }],
-    experiences: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Experience',
-      default: []
-    }],
+    
+    experiences:[{ type: String, default: [] }],
+
     role: {
       type: String,
       default: "Subscriber",
