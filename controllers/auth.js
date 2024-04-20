@@ -82,6 +82,8 @@ export const signup = async (req, res) => {
 export const signin = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const { userId } = req.body;
+
     // check if our db has user with that email
     const user = await User.findOne({ email });
     if (!user) {
@@ -90,6 +92,8 @@ export const signin = async (req, res) => {
         error: "No user found",
       });
     }
+    
+
     // check password
     const match = await comparePassword(password, user.password);
     if (!match) {
@@ -108,11 +112,18 @@ export const signin = async (req, res) => {
       // token,
       user,
     });
+    // if (userId === 'user123') {
+    //   res.status(200).send({ message: 'Login successful', token: 'yourJWTtokenHere' });
+    // } else {
+    //   res.status(401).send({ message: 'Unauthorized' });
+    // };
+
   } catch (err) {
     console.log(err);
     return res.status(400).send("Error. Try again.");
   }
 };
+
 
 export const resetPassword = async (req, res) => {
   try {
@@ -142,8 +153,10 @@ export const resetPassword = async (req, res) => {
 
 export const jobposts = async (req, res) => {
  
-  console.log("req.body: " , req.body);
+  console.log("req.body1: " , req.body);
+ 
    const user = (req.body.User && req.body._id) 
+   
   try {
     const jobPost = new JobPost({ ...req.body, user:user}) 
     await jobPost.save();
@@ -154,16 +167,29 @@ export const jobposts = async (req, res) => {
 };
 
 export const jobposts2= async (req, res) => {
+ 
   try {
+   
     const jobPosts = await JobPost.find({})
-    res.send(jobPosts);
+    const jobs = []
+    for (const jobPost of jobPosts) {
+      const user = await User.findById(jobPost.User)
+      const job = jobPost.toObject()
+      jobs.push({...job , User: user})
+    }
+
+    console.log("jobs: " , jobs);
+    
+    res.status(200).json(jobs);
   } catch (error) {
     res.status(500).send(error);
   }
 };
+
+
 export const search = async (req, res)=>{
   const {searchTerm} = req.body
-  console.log('body',req.body);
+  console.log('body2',req.body);
    if (!searchTerm) {
     return res.status(400).json({ message: 'Search term is required' });
  }
@@ -195,17 +221,22 @@ export const Skills =async(req,res)=>{
       res.status(500).json({error: true , message:error.message});
     })
 };
+
+
 export const SkillsDelete =async(req,res)=>{
-const { userId, skillName } = req.params;
+const { id, skill } = req.query || {};
+
+console.log("req.params: " , req.query);
 
     try {
-        const user = await User.findByIdAndUpdate(userId, {
-            $pull: { skills: skillName }  // $pull operator removes from an array all instances of a value that match a specified condition
-        }, { new: true });
+        const user = await User.findByIdAndUpdate(id, { $pull: { skills: skill }  } , { new: true }, );
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found', message:error.message });
+            return res.status(507).json({ message: 'User not found'});
         }
+
+        console.log("user: " ,user);
+
         res.json(user.skills);
     } catch (error) {
         console.error(error);
@@ -214,23 +245,46 @@ const { userId, skillName } = req.params;
 };
 
 
-// export const SkillsDelete =async(req,res)=>{
-//   const { userId, skill } = req.body;
- 
-//       // Pull operator removes from an existing array all instances of a value or values that match a specified condition
-//       const user = await User.findByIdAndDelete(req.body.userId, {
-//           $pull: { skills: skill }
-//       })
-//           .then( async (updateRes) => {
-//             const userFromDB = await User.findByIdAndDelete(userId)
-//             res.status(200).json({user: userFromDB})
-//           })
-//           .catch(error => {
-//             res.status(500).json({error: true , message:error.message});
-//           })
-//         };
 
+export const ExperiencesDelete =async(req,res)=>{
+  const { id, experience } = req.query || {};
+  
+  console.log("req.paramsexp: " , req.query);
+  
+      try {
+          const user = await User.findByIdAndUpdate(id, { $pull: { experiences: experience}  } , { new: true }, );
+  
+          if (!user) {
+              return res.status(507).json({ message: 'User not found'});
+          }
+  
+          console.log("user: " , user);
+  
+          res.json(user.experiences);
+      } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: 'Server error', message:error.message });
+      }
+  };
 
+  export const Experiences =async(req,res)=>{
+  
+    const { experience,userId } = req.body;
+    
+      await User.findByIdAndUpdate(req.body.userId, { 
+        $push: { experiences: experience }
+      })
+      .then( async (updateRes)=>{
+        const userFromDB = await User.findById(userId)
+        res.status(200).json({user: userFromDB})
+      })
+      .catch(error => {
+        res.status(500).json({error: true , message:error.message});
+  
+      })
+    }
+  
+  
 
 
 
@@ -247,23 +301,6 @@ const { userId, skillName } = req.params;
   // };
 
 //post 
-export const Experiences =async(req,res)=>{
-  
-  const { experience,userId } = req.body;
-  
-    await User.findByIdAndUpdate(req.body.userId, { 
-      $push: { experiences: experience }
-    })
-    .then( async (updateRes)=>{
-      const userFromDB = await User.findById(userId)
-      res.status(200).json({user: userFromDB})
-    })
-    .catch(error => {
-      res.status(500).json({error: true , message:error.message});
-
-    })
-  }
-
 
 
 // export const test=(req,res)=>{
