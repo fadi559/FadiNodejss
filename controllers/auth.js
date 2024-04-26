@@ -15,6 +15,7 @@ import JobPost from '../models/post'
 
 
 export const signup = async (req, res) => {
+  
   console.log("HIT SIGNUP");
   try {
     // validation
@@ -78,12 +79,14 @@ export const signup = async (req, res) => {
 // .catch(error => {
 //   res.status(500).json({error: true , message:error.message});
 
+    
+
 
 export const signin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const { userId } = req.body;
-
+    
     // check if our db has user with that email
     const user = await User.findOne({ email });
     if (!user) {
@@ -178,7 +181,7 @@ export const jobposts2= async (req, res) => {
       jobs.push({...job , User: user})
     }
 
-    console.log("jobs: " , jobs);
+    // console.log("jobs: " , jobs);
     
     res.status(200).json(jobs);
   } catch (error) {
@@ -285,22 +288,6 @@ export const ExperiencesDelete =async(req,res)=>{
     }
   
   
-
-
-
-
-  //       }, { new: true });
-  //       if (!user) {
-  //           return res.status(404).send('User not found');
-  //       }
-  //       res.json(user.skills);
-  //   } catch (error) {
-  //       console.error(error);
-  //       res.status(500).send('Server error');
-  //   }
-  // };
-
-//post 
 
 
 // export const test=(req,res)=>{
