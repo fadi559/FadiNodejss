@@ -172,7 +172,6 @@ export const jobposts = async (req, res) => {
 export const jobposts2= async (req, res) => {
  
   try {
-   
     const jobPosts = await JobPost.find({})
     const jobs = []
     for (const jobPost of jobPosts) {
@@ -188,7 +187,6 @@ export const jobposts2= async (req, res) => {
     res.status(500).send(error);
   }
 };
-
 
 export const search = async (req, res)=>{
   const {searchTerm} = req.body
@@ -208,7 +206,6 @@ export const search = async (req, res)=>{
   }
 };
 
-//post 
 export const Skills =async(req,res)=>{
   const { skill , userId } = req.body;
 
@@ -225,7 +222,6 @@ export const Skills =async(req,res)=>{
     })
 };
 
-
 export const SkillsDelete =async(req,res)=>{
 const { id, skill } = req.query || {};
 
@@ -238,9 +234,9 @@ console.log("req.params: " , req.query);
             return res.status(507).json({ message: 'User not found'});
         }
 
-        console.log("user: " ,user);
+        console.log("useR: " ,user);
 
-        res.json(user.skills);
+        res.status(200).json(user.skills);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error', message:error.message });
