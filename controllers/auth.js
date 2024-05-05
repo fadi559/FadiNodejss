@@ -259,7 +259,7 @@ export const ExperiencesDelete =async(req,res)=>{
   
           console.log("user: " , user);
   
-          res.json(user.experiences);
+          res.status(200).json(user.experiences);
       } catch (error) {
           console.error(error);
           res.status(500).json({ message: 'Server error', message:error.message });

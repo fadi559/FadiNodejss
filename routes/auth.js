@@ -17,7 +17,7 @@ const {
   Skills,
   Experiences,
   SkillsDelete,
-   ExperiencesDelete,
+  ExperiencesDelete,
   
 
 
@@ -39,7 +39,7 @@ router.post("/search", search);
 router.post('/Skills', Skills);
 router.post('/Experiences', Experiences);
 router.delete('/SkillsDelete',SkillsDelete);
- router.delete('/ExperiencesDelete',ExperiencesDelete);
+router.delete('/ExperiencesDelete',ExperiencesDelete);
 
 
 
