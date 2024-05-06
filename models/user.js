@@ -1,6 +1,6 @@
 
 import mongoose from "mongoose";
-import experienceSchema from "./experienceSchema";
+
 
 const { Schema, ObjectId } = mongoose;
 
