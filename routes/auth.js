@@ -18,9 +18,6 @@ const {
   Experiences,
   SkillsDelete,
   ExperiencesDelete,
-  
-
-
 } = require("../controllers/auth");
 
 
