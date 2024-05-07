@@ -21,8 +21,9 @@ const {
 } = require("../controllers/auth");
 
 
-router.get("/", (req, res) => {
+router.get("/P", (req, res) => {
   return res.json({
+    status:(200).send({ message: 'Hello, World!', status: 'Success' }),
     data: "hello world from fadi auth API",
   });
 });
