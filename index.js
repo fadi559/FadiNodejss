@@ -25,6 +25,10 @@ app.use(morgan("dev"));
 // route middlewares
 app.use("/api", authRoutes);
 
+app.get('/BB', (req, res) => {
+  res.send('Hello from my app!');
+});
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
