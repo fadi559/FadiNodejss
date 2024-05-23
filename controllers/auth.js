@@ -186,24 +186,62 @@ export const jobposts2= async (req, res) => {
     res.status(500).send(error);
   }
 };
+export const search = async (req, res) => {
+  const { searchTerm, searchType } = req.body;
+  console.log('body2', req.body);
 
-export const search = async (req, res)=>{
-  const {searchTerm} = req.body
-  console.log('body2',req.body);
-   if (!searchTerm) {
+  if (!searchTerm) {
     return res.status(400).json({ message: 'Search term is required' });
- }
-  try {
-    const user = await User.find({
+  }
 
-      name: { $regex: searchTerm, $options: 'i' }, 
-    });
-    res.json(user);
-    return;
+  try {
+    if (searchType === 'users') {
+      const users = await User.find({
+        name: { $regex: searchTerm, $options: 'i' },
+      });
+      res.json(users);
+    } else if (searchType === 'jobs') {
+      const jobs = await JobPost.find({
+        jobType: { $regex: searchTerm, $options: 'i' },
+      });
+      res.json(jobs);
+    } else {
+      res.status(400).json({error : error.message});
+    }
   } catch (error) {
-    res.status(500).send({ message: 'Error searching for users', error: error.message });
+    res.status(500).send({ message: 'Error searching for', error: error.message });  
+                                                 // ${searchType}
   }
 };
+
+// export const search = async (req, res)=>{
+//   const {searchTerm} = req.body
+//   console.log('body2',req.body);
+//    if (!searchTerm) {
+//     return res.status(400).json({ message: 'Search term is required' });
+//  }
+//  try{
+//   const Job = await JobPost.find ({
+//     jobType: { $regex: searchTerm, $options: 'i' }, 
+
+//   })
+//   res.json(Job);
+//   return;
+//  }catch(error){
+//   res.status(500).send({ message: 'Error searching for Jobs', error: error.message });
+//  }
+
+//   try {
+//     const user = await User.find({
+
+//       name: { $regex: searchTerm, $options: 'i' }, 
+//     });
+//     res.json(user);
+//     return;
+//   } catch (error) {
+//     res.status(500).send({ message: 'Error searching for users', error: error.message });
+//   }
+// };
 
 export const Skills =async(req,res)=>{
   const { skill , userId } = req.body;

@@ -21,9 +21,9 @@ const {
 } = require("../controllers/auth");
 
 
-router.get("/P", (req, res) => {
+router.get("/P", (req, res) => {  
   return res.json({
-    status:(200).send({ message: 'Hello, World!', status: 'Success' }),
+    status:(200).send({ message: 'Hello, World!', status: 'Success' }),  
     data: "hello world from fadi auth API",
   });
 });
@@ -38,21 +38,6 @@ router.post('/Skills', Skills);
 router.post('/Experiences', Experiences);
 router.delete('/SkillsDelete',SkillsDelete);
 router.delete('/ExperiencesDelete',ExperiencesDelete);
-
-
-
-
- 
-
-
-
-
- 
-
-
-
-
-
 
 
 export default router;
