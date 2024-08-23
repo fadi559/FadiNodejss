@@ -4,6 +4,12 @@ import { hashPassword, comparePassword } from "../helpers/auth";
 import jwt from "jsonwebtoken";
 import nanoid from "nanoid";
 import JobPost from '../models/post'
+// import cloudinary from "../config/cloudinary";
+import upload from "../config/CloudinaryData";
+// import user from "../models/user";
+
+
+
 
 
 
@@ -49,13 +55,16 @@ export const signup = async (req, res) => {
     }
 
     const hashedPassword = await hashPassword(password);
+    
+    
     try {
       const user = await new User({
-       
         phoneNumber,
         name,
         email,
         password:hashedPassword,
+       
+        
       }).save();
 
       // create signed token
@@ -79,6 +88,58 @@ export const signup = async (req, res) => {
 // .catch(error => {
 //   res.status(500).json({error: true , message:error.message});
 
+
+
+ 
+  export const SavePhotoUrl = async (req, res) => {
+  
+      try {
+        console.log('Uploaded file info:', req.file);
+    
+        res.status(200).json({
+          message: 'Photo uploaded successfully',
+          secure_url: req.file.path,
+        });
+      } catch (error) {
+        console.error('Error uploading photo:', error);
+        res.status(500).json({ message: 'Server error' });
+      }
+    };
+    
+    
+    
+export const updateProfileImage = async (req, res) => {
+  try {
+    const user = await User.findById(user._id);
+    // file get from client photo
+    const file = getDataUri(req.file);
+    // delete prev image
+    await cloudinary.v2.uploader.destroy(user.profilePic.public_id);
+    // update
+    const cdb = await cloudinary.v2.uploader.upload(file.content);
+    user.profilePic = {
+      public_id: cdb.public_id,
+      url: cdb.secure_url,
+      };
+      await user.save();
+
+      res.status(200).send({
+        success: true,
+        message: "profile picture updated",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        success: false,
+        message: "Error In update profile pic API",
+        error,
+      });
+    }
+  };
+  export const uploadPhotoMiddleware = upload.single('file');
+    
+    
+  
     
 
 export const signin = async (req, res) => {
@@ -153,20 +214,115 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-export const jobposts = async (req, res) => {
+
+
+// export const jobposts = async (req, res) => {
  
-  console.log("req.body1: " , req.body);
+//   console.log("req.body1: " , req.body);
  
-   const user = (req.body.User && req.body._id) 
+//    const user = (req.body.User && req.body._id) 
    
+//   try {
+//     const jobPost = new JobPost({ ...req.body, user:user}) 
+//     await jobPost.save();
+//     res.status(201).send(jobPost);
+//   } catch (error) {
+//     res.status(400).json({error : error.message});
+//   }
+// };
+
+export const jobposts = async (req, res) => {
+  console.log("req.body1: ", req.body);
+
   try {
-    const jobPost = new JobPost({ ...req.body, user:user}) 
+    const jobPost = new JobPost({ ...req.body, user: req.body.User });
     await jobPost.save();
     res.status(201).send(jobPost);
   } catch (error) {
-    res.status(400).json({error : error.message});
+    res.status(400).json({ error: error.message });
   }
 };
+
+
+// export const jobposts2 = async (req, res) => {
+//   const { interests, jobType } = req.query;
+
+//   try {
+//     let filter = {};
+
+//     // if (interests) {
+//     //   filter.interests = interests;
+//     // }
+//     // if (jobType) {
+//     //   filter.jobType = jobType;
+//     // }
+    
+//     console.log('Filter:', filter);
+
+//     const jobPosts = await user.findOne({_id:id})
+//     // .populate('user');
+//     console.log('Job Posts:', jobPosts);
+
+//     res.status(200).json(jobPosts);
+//   } catch (error) {
+//     console.error('Error fetching job posts:', error);
+//     res.status(500).send(error);
+//   }
+// };
+
+export const getFilterJobs = async (req, res) => {
+  
+  try {    
+    const user = await User.findOne(req.body)
+    const {interests} = user||{interests:""};
+    const {jobType} = user||{jobType:""};
+    const {currentJob} = user||{currentJob:""};
+   
+    console.log('Job Posts:', user);
+    // interests": "defaultInterests",
+    // "jobType": "defaultJobType",
+    // "currentJob
+    res.status(200).json({
+      user,
+      interests,
+      jobType,
+      currentJob,
+    });
+  } catch (error) {
+    console.error('Error fetching job posts:', error);
+    res.status(500).send(error);
+  }
+};
+
+// const matchJobPosts = (interests, jobPosts) => {
+//   const matchedPosts = jobPosts.filter((post) => {
+//     const jobContent = `${post.notes} ${post.jobType}`;
+//     return jobContent.toLowerCase().includes(interests.toLowerCase());
+//   });
+//   return matchedPosts;
+// };
+
+export const preferences = async (req, res) => {
+try {
+  const { userId, interests, jobType, currentJob } = req.body;
+  const  user = await User.findById(userId);
+
+  if (!user) {
+    user = new User({ _id: userId, interests, jobType, currentJob });
+  } else {
+    if (interests) user.interests = interests;
+    if (jobType) user.jobType = jobType;
+    if (currentJob) user.currentJob = currentJob;
+  }
+
+  await user.save();
+  res.status(200).json(user);
+} catch (error) {
+  res.status(500).json({ error: error.message });
+}
+};
+
+
 
 export const jobposts2= async (req, res) => {
  
@@ -186,6 +342,8 @@ export const jobposts2= async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+
 export const search = async (req, res) => {
   const { searchTerm, searchType } = req.body;
   console.log('body2', req.body);
@@ -203,7 +361,8 @@ export const search = async (req, res) => {
     } else if (searchType === 'jobs') {
       const jobs = await JobPost.find({
         jobType: { $regex: searchTerm, $options: 'i' },
-      });
+       
+      }).populate('User');
       res.json(jobs);
     } else {
       res.status(400).json({error : error.message});
@@ -214,34 +373,7 @@ export const search = async (req, res) => {
   }
 };
 
-// export const search = async (req, res)=>{
-//   const {searchTerm} = req.body
-//   console.log('body2',req.body);
-//    if (!searchTerm) {
-//     return res.status(400).json({ message: 'Search term is required' });
-//  }
-//  try{
-//   const Job = await JobPost.find ({
-//     jobType: { $regex: searchTerm, $options: 'i' }, 
 
-//   })
-//   res.json(Job);
-//   return;
-//  }catch(error){
-//   res.status(500).send({ message: 'Error searching for Jobs', error: error.message });
-//  }
-
-//   try {
-//     const user = await User.find({
-
-//       name: { $regex: searchTerm, $options: 'i' }, 
-//     });
-//     res.json(user);
-//     return;
-//   } catch (error) {
-//     res.status(500).send({ message: 'Error searching for users', error: error.message });
-//   }
-// };
 
 export const Skills =async(req,res)=>{
   const { skill , userId } = req.body;

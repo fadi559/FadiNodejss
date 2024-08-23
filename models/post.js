@@ -15,11 +15,6 @@ const jobPostSchema = new Schema(
         default:null,
         
       },
-      // skills:{
-      //   type:String,
-      //    default:null,
-  
-      // },
       location:{
         type:String,
          default:null,

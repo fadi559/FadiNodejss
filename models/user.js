@@ -1,5 +1,5 @@
 
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 
 const { Schema, ObjectId } = mongoose;
@@ -33,15 +33,31 @@ const userSchema = new Schema(
     
     experiences:[{ type: String, default: [] }],
 
+    interests: { type: String,},
+
+  jobType: { type: String, },
+
+  currentJob: { type: String, default: null },
+
+  image: {
+    
+    public_id:{
+  type:String,
+    },
+    url:{
+      type:String,
+    },
+  },
+
     role: {
       type: String,
       default: "Subscriber",
     },
-    image: {
+    imagee: {
       public_id: "",
       url: "",
     },
-    resetCode: "",
+     resetCode: "",
 
   },
   { timestamps: true },
