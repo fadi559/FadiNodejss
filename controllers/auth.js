@@ -93,29 +93,48 @@ export const signup = async (req, res) => {
  
   export const SavePhotoUrl = async (req, res) => {
   
-      try {
-        console.log('Uploaded file info:', req.file);
-    
-        res.status(200).json({
-          message: 'Photo uploaded successfully',
-          secure_url: req.file.path,
-        });
-      } catch (error) {
-        console.error('Error uploading photo:', error);
-        res.status(500).json({ message: 'Server error' });
+    try {
+      const { userId } = req.body;
+
+      console.log('Received userId:', userId);
+
+      if (!userId) {
+        return res.status(400).json({ message: 'userId is required' });
       }
-    };
-    
+   
+
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      user.profilePic = {
+        public_id: req.file.filename,
+        url: req.file.path,
+      };
+  
+      await user.save();
+  
+      res.status(200).json({
+        message: 'Profile photo updated successfully',
+        secure_url: req.file.path,
+      });
+    } catch (error) {
+      console.error('Error saving photo URL:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
     
     
 export const updateProfileImage = async (req, res) => {
   try {
     const user = await User.findById(user._id);
-    // file get from client photo
+    
     const file = getDataUri(req.file);
-    // delete prev image
+  
     await cloudinary.v2.uploader.destroy(user.profilePic.public_id);
-    // update
+    
     const cdb = await cloudinary.v2.uploader.upload(file.content);
     user.profilePic = {
       public_id: cdb.public_id,
