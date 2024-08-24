@@ -130,7 +130,7 @@ export const signup = async (req, res) => {
 export const updateProfileImage = async (req, res) => {
   try {
     const user = await User.findById(user._id);
-    
+    console.log(req.file);
     const file = getDataUri(req.file);
   
     await cloudinary.v2.uploader.destroy(user.profilePic.public_id);
@@ -140,11 +140,14 @@ export const updateProfileImage = async (req, res) => {
       public_id: cdb.public_id,
       url: cdb.secure_url,
       };
+
+      user.image = cdb.secure_url
       await user.save();
 
       res.status(200).send({
         success: true,
         message: "profile picture updated",
+        user : user
       });
     } catch (error) {
       console.log(error);
@@ -156,7 +159,6 @@ export const updateProfileImage = async (req, res) => {
     }
   };
   export const uploadPhotoMiddleware = upload.single('file');
-    
     
   
     
