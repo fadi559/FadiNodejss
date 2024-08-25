@@ -6,6 +6,8 @@ import nanoid from "nanoid";
 import JobPost from '../models/post'
 // import cloudinary from "../config/cloudinary";
 import upload from "../config/CloudinaryData";
+import user from "../models/user";
+import e from "express";
 // import user from "../models/user";
 
 
@@ -18,6 +20,37 @@ import upload from "../config/CloudinaryData";
 // const sgMail = require("@sendgrid/mail");
 // sgMail.setApiKey(process.env.SENDGRID_KEY);
 
+
+export const updateImage = async (req, res) => {
+  try{
+    const { userId,image } = req.body;
+    console.log(userId,image );
+    User.findOneAndUpdate({_id:userId},{image:image},{new:true})
+    .then((value)=>{
+      if (value) {
+        res.status(200).send({
+       success: true,
+      message: "profile picture updated",
+        })
+      }
+      else{
+        res.status(200).send({
+          success: false,
+         message: "user not found",
+           })
+      }
+    })
+    
+  }
+  catch(error){
+    res.status(500).send({
+             success: false,
+             message: "Error In update profile pic API",
+            error,
+    })
+
+  }
+}
 
 
 export const signup = async (req, res) => {
@@ -92,7 +125,6 @@ export const signup = async (req, res) => {
 
  
   export const SavePhotoUrl = async (req, res) => {
-  
     try {
       const { userId } = req.body;
 
@@ -101,67 +133,50 @@ export const signup = async (req, res) => {
       if (!userId) {
         return res.status(400).json({ message: 'userId is required' });
       }
-   
-
       const user = await User.findById(userId);
-  
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-  
       user.profilePic = {
         public_id: req.file.filename,
         url: req.file.path,
       };
-  
-      await user.save();
-  
-      res.status(200).json({
-        message: 'Profile photo updated successfully',
-        secure_url: req.file.path,
-      });
+      
+      // await user.save();
+
+      const success = await User.findOneAndUpdate({_id:userId},{image:req.file.path},{new:true})
+        .then((value)=>{
+          if (value) {return
+             true}
+             else{
+
+              return 
+              true}
+
+        }).catch((e)=>{
+          return false
+        })
+      if (success) {
+        res.status(200).json({
+          message: 'Profile photo updated successfully',
+          secure_url: req.file.path,
+        });
+      }else{
+        res.status(500).json({
+          message: 'error saving image',
+          secure_url: req.file.path,
+        });
+      }
     } catch (error) {
       console.error('Error saving photo URL:', error);
       res.status(500).json({ message: 'Server error' });
     }
   };
-    
-    
-export const updateProfileImage = async (req, res) => {
-  try {
-    const user = await User.findById(user._id);
-    console.log(req.file);
-    const file = getDataUri(req.file);
-  
-    await cloudinary.v2.uploader.destroy(user.profilePic.public_id);
-    
-    const cdb = await cloudinary.v2.uploader.upload(file.content);
-    user.profilePic = {
-      public_id: cdb.public_id,
-      url: cdb.secure_url,
-      };
 
-      user.image = cdb.secure_url
-      await user.save();
-
-      res.status(200).send({
-        success: true,
-        message: "profile picture updated",
-        user : user
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({
-        success: false,
-        message: "Error In update profile pic API",
-        error,
-      });
-    }
-  };
   export const uploadPhotoMiddleware = upload.single('file');
     
-  
     
+
 
 export const signin = async (req, res) => {
   try {

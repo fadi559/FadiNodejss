@@ -22,7 +22,7 @@ const {
   SkillsDelete,
   ExperiencesDelete,
   preferences,
-  updateProfileImage,
+  updateImage,
   getFilterJobs,
   SavePhotoUrl,
  
@@ -37,9 +37,11 @@ router.get("/P", (req, res) => {
     data: "hello world from fadi auth API",
   });
 });
+router.post('/updateImage',updateImage);
 
 router.post('/upload-photo',uploadPhotoMiddleware, SavePhotoUrl);
-router.put("/updateProfileImage",singleUpload,updateProfileImage);
+// router.put("/updateProfileImage",singleUpload,updateProfileImage);
+router.post("/preferences",preferences);
 router.post("/preferences",preferences);
  router.post("/signup",signup);
 router.post("/signin", signin);

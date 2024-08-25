@@ -40,13 +40,7 @@ const userSchema = new Schema(
   currentJob: { type: String, default: null },
 
   image: {
-    
-    public_id:{
-  type:String,
-    },
-    url:{
-      type:String,
-    },
+    type:String,
   },
 
     role: {
