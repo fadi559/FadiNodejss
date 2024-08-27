@@ -40,7 +40,6 @@ router.get("/P", (req, res) => {
 router.post('/updateImage',updateImage);
 
 router.post('/upload-photo',uploadPhotoMiddleware, SavePhotoUrl);
-// router.put("/updateProfileImage",singleUpload,updateProfileImage);
 router.post("/preferences",preferences);
 router.post("/preferences",preferences);
  router.post("/signup",signup);

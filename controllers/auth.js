@@ -146,12 +146,7 @@ export const signup = async (req, res) => {
 
       const success = await User.findOneAndUpdate({_id:userId},{image:req.file.path},{new:true})
         .then((value)=>{
-          if (value) {return
-             true}
-             else{
-
-              return 
-              true}
+          if (value) {return true} else { return true}
 
         }).catch((e)=>{
           return false
@@ -166,11 +161,13 @@ export const signup = async (req, res) => {
           message: 'error saving image',
           secure_url: req.file.path,
         });
+        
       }
     } catch (error) {
       console.error('Error saving photo URL:', error);
       res.status(500).json({ message: 'Server error' });
     }
+
   };
 
   export const uploadPhotoMiddleware = upload.single('file');
