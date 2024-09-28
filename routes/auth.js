@@ -25,7 +25,7 @@ const {
   updateImage,
   getFilterJobs,
   SavePhotoUrl,
- 
+  filterData,
   
   
 } = require("../controllers/auth");
@@ -37,8 +37,8 @@ router.get("/P", (req, res) => {
     data: "hello world from fadi auth API",
   });
 });
+router.post("/filterData",filterData);
 router.post('/updateImage',updateImage);
-
 router.post('/upload-photo',uploadPhotoMiddleware, SavePhotoUrl);
 router.post("/preferences",preferences);
 router.post("/preferences",preferences);

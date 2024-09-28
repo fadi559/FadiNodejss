@@ -406,7 +406,19 @@ export const search = async (req, res) => {
   }
 };
 
-
+export const filterData=async(req,res)=>{
+  try{
+    const data = await User.find(req.body);
+    res.status(200).json({
+      data,
+    });
+  }
+  catch({message}){
+    res.status(400).json({
+      message,
+    });
+  }
+}
 
 export const Skills =async(req,res)=>{
   const { skill , userId } = req.body;
