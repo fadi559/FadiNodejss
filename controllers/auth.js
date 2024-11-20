@@ -8,7 +8,10 @@ import JobPost from '../models/post'
 import upload from "../config/CloudinaryData";
 import user from "../models/user";
 import e from "express";
-// import user from "../models/user";
+import mongoose from "mongoose";
+import Skills from "../models/Skills";
+import jobType from "../models/jobType";
+
 
 
 
@@ -249,7 +252,7 @@ export const resetPassword = async (req, res) => {
 
 
 
-// export const jobposts = async (req, res) => {
+// export const jobposts oldOne = async (req, res) => {
  
 //   console.log("req.body1: " , req.body);
  
@@ -264,20 +267,72 @@ export const resetPassword = async (req, res) => {
 //   }
 // };
 
+// export const jobposts the use one before  = async (req, res) => {
+//   console.log("req.body1: ", req.body);
+
+//   try {
+//     const jobPost = new JobPost({ ...req.body, user: req.body.User });
+//     await jobPost.save();
+//     res.status(201).send(jobPost);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// };
+
+// export const jobposts = async (req, res) => {
+//   console.log("req.body: ", req.body);
+
+//   try {
+    
+//     let jobTypeRecord = await jobType.findOne({ name: req.body.jobType});
+//     if (!jobTypeRecord) {
+//       jobTypeRecord = new jobType({ name: req.body.jobType });
+//       await jobTypeRecord.save();
+//     }
+
+    
+//     const jobPost = new JobPost({ ...req.body, user: req.body.User });
+//     await jobPost.save();
+
+//     res.status(200).json(jobPost);
+//   } catch (error) {
+//     console.error("Error in jobposts function:", error);
+//     res.status(400).json({ error: error.message });
+//   }
+// };
+
 export const jobposts = async (req, res) => {
-  console.log("req.body1: ", req.body);
+  console.log("req.body: ", req.body);
 
   try {
-    const jobPost = new JobPost({ ...req.body, user: req.body.User });
+    // Step 1: Find the user by their name
+    const user = await User.findOne({ User: req.body.name });
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    // Step 2: Create or find the job type in JobType collection
+    let jobTypeRecord = await jobType.findOne({ name: req.body.jobType });
+    if (!jobTypeRecord) {
+      jobTypeRecord = new jobType({ name: req.body.jobType });
+      await jobTypeRecord.save();
+    }
+
+    // Step 3: Create the JobPost with reference to the user ID
+    const jobPost = new JobPost({ ...req.body, user: user._id });
     await jobPost.save();
-    res.status(201).send(jobPost);
+
+    res.status(200).json(jobPost);
   } catch (error) {
+    console.error("Error in jobposts function:", error);
     res.status(400).json({ error: error.message });
   }
 };
 
 
-// export const jobposts2 = async (req, res) => {
+
+
+// export const jobposts2 old one for interst   = async (req, res) => {
 //   const { interests, jobType } = req.query;
 
 //   try {
@@ -327,15 +382,8 @@ export const getFilterJobs = async (req, res) => {
   }
 };
 
-// const matchJobPosts = (interests, jobPosts) => {
-//   const matchedPosts = jobPosts.filter((post) => {
-//     const jobContent = `${post.notes} ${post.jobType}`;
-//     return jobContent.toLowerCase().includes(interests.toLowerCase());
-//   });
-//   return matchedPosts;
-// };
-
 export const preferences = async (req, res) => {
+
 try {
   const { userId, interests, jobType, currentJob } = req.body;
   const  user = await User.findById(userId);
@@ -357,24 +405,71 @@ try {
 
 
 
-export const jobposts2= async (req, res) => {
+// export const jobposts2 the one was used last time  = async (req, res) => {
  
-  try {
-    const jobPosts = await JobPost.find({})
-    const jobs = []
-    for (const jobPost of jobPosts) {
-      const user = await User.findById(jobPost.User)
-      const job = jobPost.toObject()
-      jobs.push({...job , User: user})
-    }
+//   try {
+//     const jobPosts = await JobPost.find({})
+//     const jobs = []
+//     for (const jobPost of jobPosts) {
+//       const user = await User.findById(jobPost.User)
+//       const job = jobPost.toObject()
+//       jobs.push({...job , User: user})
+//     }
 
-    // console.log("jobs: " , jobs);
+//     // console.log("jobs: " , jobs);
     
-    res.status(200).json(jobs);
+//     res.status(200).json(jobs);
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+//  };
+
+// export const jobposts2 = async (req, res) => {
+//   try {
+//     const jobPosts = await JobPost.find({});
+//     const jobs = await Promise.all(
+//       jobPosts.map(async (jobPost) => {
+//         try {
+//           // Find user details for the job post
+//           const user = await User.findById(jobPost.user);
+//           if (!user) {
+//             console.error(`User not found for job post ID: ${jobPost.user}`);
+//           }
+
+//           // Combine the job and user details
+//           const job = jobPost.toObject();
+//           return { ...job, user: user };
+//         } catch (userError) {
+//           console.error(`Error fetching user for job post ID ${jobPost._id}:`, userError);
+//           return { ...jobPost.toObject(), user: null }; // In case of error, set user to null
+//         }
+//       })
+//     );
+
+//     res.status(200).json(jobs);
+//   } catch (error) {
+//     console.error("Error in jobposts2 function:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+
+export const jobposts2 = async (req, res) => {
+  try {
+    // Fetch all job posts without populating any fields
+    const jobPosts = await JobPost.find({});
+
+    // Return the fetched job posts
+    res.status(200).json(jobPosts);
   } catch (error) {
-    res.status(500).send(error);
+    console.error("Error in jobposts2 function:", error);
+    res.status(500).json({ error: error.message });
   }
 };
+
+
+
+
 
 
 export const search = async (req, res) => {
@@ -406,9 +501,13 @@ export const search = async (req, res) => {
   }
 };
 
+
 export const filterData=async(req,res)=>{
+  
+
   try{
     const data = await User.find(req.body);
+    
     res.status(200).json({
       data,
     });
@@ -420,21 +519,62 @@ export const filterData=async(req,res)=>{
   }
 }
 
-export const Skills =async(req,res)=>{
-  const { skill , userId } = req.body;
 
-     User.findByIdAndUpdate(req.body.userId, {
-      $push: { skills: skill }
-    })
-    // res.status(200).send('Skill added')
-    .then( async (updateRes) => {
-      const userFromDB = await User.findById(userId)
-      res.status(200).json({user: userFromDB})
-    })
-    .catch(error => {
-      res.status(500).json({error: true , message:error.message});
-    })
+
+export const BothSkills = async (req, res) => {
+  const { skill, userId } = req.body;
+
+  if (!skill || !userId) {
+    return res.status(400).json({ error: true, message: "Skill and userId are required." });
+  }
+
+  try {
+    
+    let newSkill = await Skills.findOne({ name: skill });
+    if (!newSkill) {
+      newSkill = new Skills({ name: skill });
+      await newSkill.save();
+    }
+
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $addToSet: { skills: newSkill.name }, 
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: true, message: "User not found" });
+    }
+
+    res.status(200).json({ user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ error: true, message: error.message });
+  }
 };
+
+
+
+
+
+// export const Skills =async(req,res)=>{
+//   const { skill , userId } = req.body;
+
+//      User.findByIdAndUpdate(req.body.userId, {
+//       $push: { skills: skill }
+//     })
+//     // res.status(200).send('Skill added')
+//     .then( async (updateRes) => {
+//       const userFromDB = await User.findById(userId)
+//       res.status(200).json({user: userFromDB})
+//     })
+//     .catch(error => {
+//       res.status(500).json({error: true , message:error.message});
+//     })
+// };
+
 
 export const SkillsDelete =async(req,res)=>{
 const { id, skill } = req.query || {};

@@ -2,6 +2,7 @@
 import mongoose, { Types } from "mongoose";
 
 
+
 const { Schema, ObjectId } = mongoose;
 
 
@@ -35,7 +36,7 @@ const userSchema = new Schema(
 
     interests: { type: String,},
 
-  jobType: { type: String, },
+  jobType2: { type: String, },
 
   currentJob: { type: String, default: null },
 
@@ -52,10 +53,12 @@ const userSchema = new Schema(
       url: "",
     },
      resetCode: "",
+     jobPosts: [{ type: ObjectId, ref: "JobPost" }],
 
   },
   { timestamps: true },
 
+  
 );
 
 export default mongoose.model("User", userSchema);

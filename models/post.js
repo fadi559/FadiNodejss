@@ -5,7 +5,7 @@ const jobPostSchema = new Schema(
     {
       
 
-     User: { type: String, ref: "User", required: true },
+      User: { type: String, ref: "User", required: true },
      postedBy:{
         type: mongoose. Schema.ObjectId,
        ref:"User",
@@ -26,7 +26,7 @@ const jobPostSchema = new Schema(
       Phonenumber:{
         type:String,
         trim: true,
-        unique: true,
+        // unique: true,
       },
       datePosted: { type: Date, default: Date.now }
     }
