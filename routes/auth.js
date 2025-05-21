@@ -4,9 +4,9 @@ import authenticateToken from "../models/authenticateToken";
 import cloudinary from "../config/cloudinary";
 import upload from "../config/multer";
 import singleUpload from "../config/multer";
-import { uploadPhotoMiddleware } from "../controllers/auth";
-import { createSkill } from "../controllers/skills.controller";
-import { createJobType } from "../controllers/JobType.controller";
+import {uploadPhotoMiddleware } from "../controllers/auth";
+import { GetSkills, createSkill } from "../controllers/skills.controller";
+import { GetJobType, createJobType } from "../controllers/JobType.controller";
 const router = express.Router();
 
 
@@ -28,6 +28,8 @@ const {
   SavePhotoUrl,
   filterData,
   BothSkills,
+  getJobsByTitle,
+  getSkillsByTitle,
   
   
   
@@ -44,20 +46,25 @@ router.post("/filterData",filterData);
 router.post('/updateImage',updateImage);
 router.post('/upload-photo',uploadPhotoMiddleware, SavePhotoUrl);
 router.post("/preferences",preferences);
-router.post("/preferences",preferences);
- router.post("/signup",signup);
+// router.post("/preferences",preferences);
+router.post("/signup",signup);
 router.post("/signin", signin);
 router.post("/reset-password", resetPassword);
-router.post('/jobposts', jobposts);
-router.get('/jobposts2', jobposts2);
-router.post("/search", search);
-router.post('/BothSkills', BothSkills);
+router.post('/jobposts',jobposts);
+router.get('/jobposts2',jobposts2);
+router.post("/search",search);
+router.post('/BothSkills',BothSkills);
 router.post('/Experiences', Experiences);
 router.delete('/SkillsDelete',SkillsDelete);
 router.delete('/ExperiencesDelete',ExperiencesDelete);
 router.post('/getFilterJobs',getFilterJobs);
 router.post("/createSkill",createSkill);
 router.post("/createJobType",createJobType);
+router.post("/GetSkills",GetSkills);
+router.post("/GetJobType",GetJobType);
+router.post('/getJobsByTitle',getJobsByTitle);
+router.post('/getSkillsByTitle',getSkillsByTitle);
+
 
 
 

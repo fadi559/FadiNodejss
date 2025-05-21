@@ -305,20 +305,17 @@ export const jobposts = async (req, res) => {
   console.log("req.body: ", req.body);
 
   try {
-    // Step 1: Find the user by their name
     const user = await User.findOne({ User: req.body.name });
     if (!user) {
       return res.status(400).json({ error: "User not found" });
     }
 
-    // Step 2: Create or find the job type in JobType collection
     let jobTypeRecord = await jobType.findOne({ name: req.body.jobType });
     if (!jobTypeRecord) {
       jobTypeRecord = new jobType({ name: req.body.jobType });
       await jobTypeRecord.save();
     }
 
-    // Step 3: Create the JobPost with reference to the user ID
     const jobPost = new JobPost({ ...req.body, user: user._id });
     await jobPost.save();
 
@@ -326,6 +323,41 @@ export const jobposts = async (req, res) => {
   } catch (error) {
     console.error("Error in jobposts function:", error);
     res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+export const getJobsByTitle = async (req, res) => {
+  const { jobType } = req.body;
+
+  try {
+    
+    const jobs = await JobPost.find({ jobType: { $regex: jobType, $options: 'i' } })
+    .populate('User', 'name') // Populate the User field and only include the 'name' field
+      .exec();
+
+    res.status(200).json({ data: jobs });
+  } catch (error) {
+    console.error('Error fetching jobs by jobtype:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
+export const getSkillsByTitle = async (req, res) => {
+  const { skills } = req.body;
+
+  try {
+    
+    const jobs = await User.find({ skills: { $regex:skills, $options: 'i' } })
+    // .populate('User', 'name') // Populate the User field and only include the 'name' field
+    //   .exec();
+
+    res.status(200).json({ data: jobs });
+  } catch (error) {
+    console.error('Error fetching jobs by skills:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -406,6 +438,7 @@ try {
 
 
 // export const jobposts2 the one was used last time  = async (req, res) => {
+
  
 //   try {
 //     const jobPosts = await JobPost.find({})
@@ -424,43 +457,32 @@ try {
 //   }
 //  };
 
-// export const jobposts2 = async (req, res) => {
-//   try {
-//     const jobPosts = await JobPost.find({});
-//     const jobs = await Promise.all(
-//       jobPosts.map(async (jobPost) => {
-//         try {
-//           // Find user details for the job post
-//           const user = await User.findById(jobPost.user);
-//           if (!user) {
-//             console.error(`User not found for job post ID: ${jobPost.user}`);
-//           }
 
-//           // Combine the job and user details
-//           const job = jobPost.toObject();
-//           return { ...job, user: user };
-//         } catch (userError) {
-//           console.error(`Error fetching user for job post ID ${jobPost._id}:`, userError);
-//           return { ...jobPost.toObject(), user: null }; // In case of error, set user to null
-//         }
-//       })
-//     );
-
-//     res.status(200).json(jobs);
-//   } catch (error) {
-//     console.error("Error in jobposts2 function:", error);
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 
 
 export const jobposts2 = async (req, res) => {
   try {
-    // Fetch all job posts without populating any fields
     const jobPosts = await JobPost.find({});
+    const jobs = await Promise.all(
+      jobPosts.map(async (jobPost) => {
+        try {
+         
+          const user = await User.findById(jobPost.User);
+          if (!user) {
+            console.error(`User not found for job post ID: ${jobPost.User}`);
+          }
 
-    // Return the fetched job posts
-    res.status(200).json(jobPosts);
+         
+          const job = jobPost.toObject();
+          return { ...job, User: user };
+        } catch (userError) {
+          console.error(`Error fetching user for job post ID ${jobPost._id}:`, userError);
+          return { ...jobPost.toObject(), user: null };
+        }
+      })
+    );
+
+    res.status(200).json(jobs);
   } catch (error) {
     console.error("Error in jobposts2 function:", error);
     res.status(500).json({ error: error.message });
@@ -468,6 +490,18 @@ export const jobposts2 = async (req, res) => {
 };
 
 
+// export const jobposts2 = async (req, res) => {
+//   try {
+//     // Fetch all job posts without populating any fields
+//     const jobPosts = await JobPost.find({});
+
+//     // Return the fetched job posts
+//     res.status(200).json(jobPosts);
+//   } catch (error) {
+//     console.error("Error in jobposts2 function:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 
 
 
@@ -576,6 +610,8 @@ export const BothSkills = async (req, res) => {
 // };
 
 
+
+
 export const SkillsDelete =async(req,res)=>{
 const { id, skill } = req.query || {};
 
@@ -639,14 +675,6 @@ export const ExperiencesDelete =async(req,res)=>{
   
   
 
-
-// export const test=(req,res)=>{
-  
-//   res.json([
-//     { id: 1, name: 'John Doe' },
-//     { id: 2, name: 'Jane Doe' }
-//   ]);
-// };
 
 
 

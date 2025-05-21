@@ -9,6 +9,7 @@ const jobTypeSchema = new Schema(
       type: String,
       trim: true,
       required: true,
+      // unique: true,
       validate: {
         validator: function (v) {
           return v != null && v !== "";

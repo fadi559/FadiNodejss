@@ -21,3 +21,22 @@ export const createSkill = (req, res) => {
 //               data:req.body
 //           })
 };
+
+export const GetSkills = (req, res) => {
+  
+  const name = req.body.name || "";
+  skill_model
+    .find({name:{ $regex:name , $options: 'i' }})
+    .then((v) => {
+      res.status(200).json({
+        success: true,
+        data: v,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        success: false,
+        data: error.message,
+      });
+    });
+  }

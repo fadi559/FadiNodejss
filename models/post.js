@@ -4,8 +4,7 @@ const { Schema,ObjectId } = mongoose;
 const jobPostSchema = new Schema(
     {
       
-
-      User: { type: String, ref: "User", required: true },
+      User: { type:mongoose.Schema.Types.ObjectId, ref:"User", required: true },
      postedBy:{
         type: mongoose. Schema.ObjectId,
        ref:"User",
@@ -13,7 +12,6 @@ const jobPostSchema = new Schema(
     jobType:{
         type:String,
         default:null,
-        
       },
       location:{
         type:String,
@@ -31,5 +29,4 @@ const jobPostSchema = new Schema(
       datePosted: { type: Date, default: Date.now }
     }
     )
-
       export default mongoose.model("JobPost",jobPostSchema);
