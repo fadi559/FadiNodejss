@@ -30,7 +30,6 @@ const {
   BothSkills,
   
   
-  
 } = require("../controllers/auth");
 
 
